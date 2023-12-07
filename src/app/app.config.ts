@@ -7,5 +7,5 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 export const appConfig: ApplicationConfig = {
   providers: [provideRouter(routes),
     BrowserModule,
-    BrowserAnimationsModule, provideAnimations(), provideAnimations()]
+    BrowserAnimationsModule, provideAnimations(), provideAnimations(), provideAnimations()]
 };
