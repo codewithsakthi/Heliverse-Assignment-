@@ -11,6 +11,11 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { HeaderComponent } from '../header/header.component';
+import { ButtonModule } from 'primeng/button';
+import { Message } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AccordionModule } from 'primeng/accordion';
 
 interface UserData {
   id: number;
@@ -38,6 +43,9 @@ interface UserData {
     NzButtonModule,
     DropdownModule,
     HeaderComponent,
+    ButtonModule,
+    MessagesModule,
+    AccordionModule
     
   ],
   templateUrl: './home.component.html',
@@ -45,6 +53,8 @@ interface UserData {
 })
 export class HomeComponent {
   Users: UserData[] = studentsData;  
+  messages: Message[] = [];
+
   searchName: string = '';
   filteredPeople: UserData[] = [];
   Filters: any[] = [
@@ -66,11 +76,13 @@ export class HomeComponent {
   teams: any[] = [];
   filteredCards: any[] = [];
   uniqueGenders:string[]=[];
-  constructor() {    
+  constructor(  ) {    
     this.totalUsers = this.Users.length;
     this.paginatedUsers = this.Users.slice(0, this.rows);
+    
   }
   ngOnInit(): void {
+    this.filteredCards=this.Users
     this.findUniqueDomains();
   }
   findUniqueDomains() {
@@ -79,24 +91,24 @@ export class HomeComponent {
 
   }
 
+  createTeam() {
+    const selectedDomain = this.filteredCards.filter((card: any) => card.available && !this.selectedTeam.includes(card));
+    this.selectedTeam = [...this.selectedTeam, ...selectedDomain];
+  }
 
+  showTeamDetails() {
+    console.log('Team Members:', this.selectedTeam);
+  }
   onPageChange(event: any) {
+    console.log('onPageChange event:', event);
     const startIndex = event.first;
-    this.paginatedUsers = this.Users.slice(startIndex, startIndex + this.rows);
+    console.log('startIndex:', startIndex);
+    console.log('this.rows:', this.rows);
+    console.log('this.filteredCards:', this.filteredCards);
+  
+    this.paginatedUsers = this.filteredCards.slice(startIndex, startIndex + this.rows);
   }
-  search() {
-    this.filteredPeople = this.Users.filter(person =>
-      person.first_name.toLowerCase().includes(this.searchName.toLowerCase()) ||
-      person.last_name.toLowerCase().includes(this.searchName.toLowerCase())
-    );
-    this.filter=true;
-    console.log(this.filteredPeople)
-  }
-  clear() {
-    this.searchName=""
-    this.filter=false;
-    console.log(this.filteredPeople)
-  }
+  
 
   filterByDomain(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
@@ -119,9 +131,87 @@ export class HomeComponent {
     if (selectElement) {
       const availability = selectElement.value;
       const available = availability === 'true' ? true : availability === 'false' ? false : null;
+  
+      // Compare card.available directly with the boolean value
       this.filteredCards = this.Users.filter((card: any) =>
         available !== null ? card.available === available : true
       );
+  
     }
   }
+  
+
+  applyFilters() {
+    const domain = this.getFilterValue('domain');
+    const gender = this.getFilterValue('gender');
+    const availability = this.getFilterValue('availability');
+  
+    this.filteredCards = this.Users.filter((card: any) =>
+      (domain ? card.domain === domain : true) &&
+      (gender ? card.gender === gender : true) &&
+      (availability !== null ? card.available === availability : true)
+    );
+    this.onPageChange({ first: 0 });
+  }
+  searchByName(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement) {
+      const searchValue = inputElement.value.toLowerCase();
+      this.filteredCards = this.Users.filter(
+        (card: any) =>
+          card.first_name.toLowerCase().includes(searchValue) ||
+          card.last_name.toLowerCase().includes(searchValue)
+      );
+    }
+  }
+  getFilterValue(filterType: string): string | boolean | null {
+    const selectElement = document.getElementById(`${filterType}Select`) as HTMLSelectElement;
+  
+    if (selectElement) {
+      return filterType === 'availability'
+        ? selectElement.value === 'true'
+        : selectElement.value || null;
+    }
+  
+    return null;
+  }
+
+  addToTeam(card: any) {
+    if (card.available) {
+      if (!this.selectedTeam.includes(card)) {
+        const memberInTeam = this.teams.some(team => team.includes(card));
+        
+        if (!memberInTeam) {
+          // Check if any member in the selected team has the same domain
+          const domainConflict = this.selectedTeam.some(member => member.domain === card.domain);
+  
+          if (!domainConflict) {
+            this.selectedTeam.push(card);
+          } else {
+            alert(`Another user from the domain ${card.domain} is already in the team.`);
+          }
+        } else {
+          alert(`${card.first_name} ${card.last_name} is already in a team.`);
+        }
+      }
+    } else {
+      // this.messages = [{ severity: 'error', summary: 'Error', detail: 'Message Content' }];   
+      alert(`${card.first_name} ${card.last_name} is not Available.`);
+    }
+  }
+  
+  isMemberAlreadyAdded(card: any): boolean {
+    return this.selectedTeam.includes(card);
+  }
+  
+  formTeam() {
+    this.teams.push(this.selectedTeam);
+
+    this.Users = this.Users.filter(card => !this.selectedTeam.includes(card));
+
+    this.selectedTeam = [];
+  }
+
+
+
 }

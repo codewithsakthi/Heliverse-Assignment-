@@ -1,65 +1,136 @@
 <app-header></app-header>
-<div class="container">
-  <!-- Functionalities -->
-  <section>
-    <div class="row">
-      <div class="col-md-8">
-        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton" style="width: 100%; padding: 5px;">
-          <input type="text" nz-input placeholder="Input search text" [(ngModel)]="searchName" />
-        </nz-input-group>
-        <ng-template #suffixButton>
-            <button nz-button nzType="primary" nzSize="large" (click)="search()">Search</button>
-            <button nz-button nzType="primary" nzSize="large"nzDanger (click)="clear()">Clear</button>
+<!-- <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages> -->
 
-        </ng-template>
-      </div>
+<div class="container">
+
+    <div class="container">
+        <div class="card mb-4">
+            <p-accordion [multiple]="true" [activeIndex]="[0]">
+                <p-accordionTab header="Team Members">
+                    <div class="card-body">
+                        <div class="row">
+                          <ng-container *ngFor="let user of selectedTeam; let i = index">
+                            <div class="col-md-4 mb-4">
+                              <p-card header="User Information" [style]="{ width: '300px' }">
+                                <ng-template pTemplate="header">
+                                  <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>
+                                </ng-template>
+                                <p>
+                                  <strong>ID:</strong> {{ user.id }}<br>
+                                  <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
+                                  <strong>Email:</strong> {{ user.email }}<br>
+                                  <strong>Gender:</strong> {{ user.gender }}<br>
+                                  <strong>Domain:</strong> {{ user.domain }}<br>
+                                  <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
+                                </p>
+                                <ng-template pTemplate="footer">
+                                  <button class="btn btn-success" (click)="addToTeam(user)" [disabled]="isMemberAlreadyAdded(user)">
+                                    Add to Team
+                                  </button>
+                                </ng-template>
+                              </p-card>
+                            </div>
+                            <!-- Close the row and start a new row after every third card -->
+                            <div *ngIf="(i + 1) % 3 === 0" class="w-100 d-none d-md-block"></div>
+                          </ng-container>
+                        </div>
+                        <p>Total Team Members: {{ selectedTeam.length }}</p>
+                        <div class="text-center">
+                          <button class="btn btn-primary" (click)="formTeam()" [disabled]="selectedTeam.length === 0">
+                            Form Team
+                          </button>
+                        </div>
+                      </div>
+                </p-accordionTab>
+            </p-accordion>
+
+
+        </div>
       
-      <div class="col-md-4">
-        <div class="filters row justify-content-center">
-            
-            <div class="col-md-3 mb-2">
-              <select class="form-select" (change)="filterByDomain($event)">
-                <option value="">All Domains</option>
-                <option *ngFor="let domain of uniqueDomains" [value]="domain">{{ domain }}</option>
-              </select>
-            </div>
-            
-            <div class="col-md-3 mb-2">
-              <select class="form-select" (change)="filterByGender($event)">
-                <option *ngFor="let domain of uniqueGenders" [value]="domain">{{ domain }}</option>
-              </select>
-            </div>
-            
-            <div class="col-md-3 mb-2">
-              <select class="form-select" (change)="filterByAvailability($event)">
-                <option value="">All Availability</option>
-                <option value="true">Available</option>
-                <option value="false">Not Available</option>
-              </select>
+        <div class="card mb-4">
+            <p-accordion [multiple]="true" [activeIndex]="[0]">
+                <p-accordionTab header="Teams">
+                              <div class="card-body">
+            <div *ngFor="let team of teams; let i = index" class="card mb-3">
+              <div class="card-header">
+                <h5 class="card-title">Team {{ i + 1 }}</h5>
+              </div>
+              <div class="row">
+                <div *ngFor="let user of team; let j = index" class="col-md-4 mb-3">
+                  <p-card header="User Information" [style]="{ width: '300px' }">
+                    <ng-template pTemplate="header">
+                      <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>
+                    </ng-template>
+                    <p>
+                      <strong>ID:</strong> {{ user.id }}<br>
+                      <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
+                      <strong>Email:</strong> {{ user.email }}<br>
+                      <strong>Gender:</strong> {{ user.gender }}<br>
+                      <strong>Domain:</strong> {{ user.domain }}<br>
+                      <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
+                    </p>
+                    <ng-template pTemplate="footer">
+                      <button class="btn btn-success" (click)="addToTeam(user)" [disabled]="isMemberAlreadyAdded(user)">
+                        Add to Team
+                      </button>
+                    </ng-template>
+                  </p-card>
+                </div>
+              </div>
             </div>
           </div>
+                </p-accordionTab>
+            </p-accordion>
+
+
         </div>
       </div>
+      
+
+  <!-- Functionalities -->
+  <section style="padding-bottom: 10px;" >
+    <div class="row">
+        <div>
+            
+        </div>
+      <div class="col-md-6">
+        <input type="text" class="form-control filters" placeholder="Search by Name" (input)="searchByName($event)">
+      </div>
+      
+      <div class="col-md-6">
+        <div class="filters row justify-content-center">
+
+
+              <div class="col-md-3 mb-2">
+                <select class="form-select" (change)="applyFilters()" id="genderSelect">
+                  <option value="">All Genders</option>
+                  <option *ngFor="let gender of uniqueGenders" [value]="gender">{{ gender }}</option>
+                </select>
+              </div>
+              
+              <div class="col-md-3 mb-2">
+                <select class="form-select" (change)="applyFilters()" id="availabilitySelect">
+                  <option value="">All Availability</option>
+                  <option value="true">Available</option>
+                  <option value="false">Not Available</option>
+                </select>
+              </div>
+              <div class="col-md-3 mb-2">
+                <select class="form-select" (change)="applyFilters()" id="domainSelect">
+                  <option value="">All Domains</option>
+                  <option *ngFor="let domain of uniqueDomains" [value]="domain">{{ domain }}</option>
+                </select>
+              </div>
+              
+          </div>
+      </div>
+    </div>
   </section>
   
-  
-  <!-- <div class="card-container" *ngIf="filter" >
-    <p-card *ngFor="let user of filteredPeople" header="User Information" [style]="{ width: '360px' }">
-        <ng-template pTemplate="header"  >
-            <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
-        </ng-template>
-        <p>
-            <strong>ID:</strong> {{ user.id }}<br>
-            <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
-            <strong>Email:</strong> {{ user.email }}<br>
-            <strong>Gender:</strong> {{ user.gender }}<br>
-            <strong>Domain:</strong> {{ user.domain }}<br>
-            <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
-        </p>
-    </p-card>
-</div>
 
-    <div class="card-container" *ngIf="!filter" >
+
+
+    <div class="card-container" >
         <p-card *ngFor="let user of paginatedUsers" header="User Information" [style]="{ width: '360px' }">
             <ng-template pTemplate="header"  >
                 <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
@@ -72,27 +143,14 @@
                 <strong>Domain:</strong> {{ user.domain }}<br>
                 <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
             </p>
-        </p-card>
-    </div> -->
-
-
-
-    <div class="card-container" >
-        <p-card *ngFor="let user of filteredCards" header="User Information" [style]="{ width: '360px' }">
-            <ng-template pTemplate="header"  >
-                <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
+            <ng-template pTemplate="footer">
+                <button class="btn btn-success" (click)="addToTeam(user)" [disabled]="isMemberAlreadyAdded(user)">
+                    Add to Team
+                </button>
             </ng-template>
-            <p>
-                <strong>ID:</strong> {{ user.id }}<br>
-                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
-                <strong>Email:</strong> {{ user.email }}<br>
-                <strong>Gender:</strong> {{ user.gender }}<br>
-                <strong>Domain:</strong> {{ user.domain }}<br>
-                <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
-            </p>
         </p-card>
     </div> 
 </div>
 
   
-  <p-paginator (onPageChange)="onPageChange($event)" [rows]="rows" [totalRecords]="totalUsers" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+  <p-paginator (onPageChange)="onPageChange($event)" [rows]="rows" [totalRecords]="totalUsers" ></p-paginator>
