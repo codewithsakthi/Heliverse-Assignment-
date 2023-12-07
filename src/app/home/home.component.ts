@@ -166,6 +166,8 @@ export class HomeComponent {
           card.last_name.toLowerCase().includes(searchValue)
       );
     }
+    this.onPageChange({ first: 0 });
+
   }
   getFilterValue(filterType: string): string | boolean | null {
     const selectElement = document.getElementById(`${filterType}Select`) as HTMLSelectElement;

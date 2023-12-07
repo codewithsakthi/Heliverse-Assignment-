@@ -3,6 +3,7 @@
 @import "primeng/resources/primeng.css";
 @import "ng-zorro-antd/ng-zorro-antd.css";
 @import "tailwindcss/base";
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 @import "tailwindcss/components";
 
