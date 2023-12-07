@@ -1,0 +1,37 @@
+<div class="container">
+  <!-- Functionalities -->
+    <section>
+        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+            <input type="text" nz-input placeholder="input search text" [(ngModel)]="searchName" />
+          </nz-input-group>
+          <ng-template #suffixButton>
+            <button nz-button nzType="primary" nzSize="large" (click)="search()">Search</button>
+          </ng-template>
+      
+          <!-- Display your data here based on search results -->
+          <div *ngFor="let person of filteredPeople">
+            {{ person.first_name }} {{ person.last_name }}
+          </div>
+    </section>
+
+
+
+    <div class="card-container">
+        <p-card *ngFor="let user of paginatedUsers" header="User Information" [style]="{ width: '360px' }">
+            <ng-template pTemplate="header"  >
+                <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
+            </ng-template>
+            <p>
+                <strong>ID:</strong> {{ user.id }}<br>
+                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
+                <strong>Email:</strong> {{ user.email }}<br>
+                <strong>Gender:</strong> {{ user.gender }}<br>
+                <strong>Domain:</strong> {{ user.domain }}<br>
+                <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
+            </p>
+        </p-card>
+    </div>
+</div>
+
+  
+  <p-paginator (onPageChange)="onPageChange($event)" [rows]="rows" [totalRecords]="totalUsers" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>

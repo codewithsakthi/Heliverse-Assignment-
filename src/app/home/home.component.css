@@ -1,0 +1,12 @@
+/* Adjust the width of the container to accommodate three cards in a row */
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  p-card {
+    width: calc(33.33% - 10px); 
+    margin-bottom: 20px; /* Add some space between rows */
+  }
+
