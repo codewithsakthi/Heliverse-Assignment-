@@ -3,7 +3,9 @@
 
 <div class="container">
 
+    <!-- Team Block -->
     <div class="container">
+        <!-- Team Members -->
         <div class="card mb-4">
             <p-accordion [multiple]="true" [activeIndex]="[0]">
                 <p-accordionTab header="Team Members">
@@ -47,6 +49,7 @@
 
         </div>
       
+        <!-- Teams -->
         <div class="card mb-4">
             <p-accordion [multiple]="true" [activeIndex]="[0]">
                 <p-accordionTab header="Teams">
@@ -84,23 +87,19 @@
 
 
         </div>
-      </div>
+    
+    </div>
       
 
   <!-- Functionalities -->
   <section style="padding-bottom: 10px;" >
     <div class="row">
-        <div>
-            
-        </div>
       <div class="col-md-6">
         <input type="text" class="form-control filters" placeholder="Search by Name" (input)="searchByName($event)">
       </div>
       
       <div class="col-md-6">
         <div class="filters row justify-content-center">
-
-
               <div class="col-md-3 mb-2">
                 <select class="form-select" (change)="applyFilters()" id="genderSelect">
                   <option value="">All Genders</option>
@@ -115,22 +114,20 @@
                   <option value="false">Not Available</option>
                 </select>
               </div>
+
               <div class="col-md-3 mb-2">
                 <select class="form-select" (change)="applyFilters()" id="domainSelect">
                   <option value="">All Domains</option>
                   <option *ngFor="let domain of uniqueDomains" [value]="domain">{{ domain }}</option>
                 </select>
               </div>
-              
           </div>
       </div>
     </div>
   </section>
   
-
-
-
-    <div class="card-container" >
+  <!-- Display Cards -->
+  <div class="card-container" >
         <p-card *ngFor="let user of paginatedUsers" header="User Information" [style]="{ width: '360px' }">
             <ng-template pTemplate="header"  >
                 <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
@@ -149,8 +146,12 @@
                 </button>
             </ng-template>
         </p-card>
-    </div> 
+  </div> 
+  <p-paginator (onPageChange)="onPageChange($event)" [rows]="rows" [totalRecords]="totalUsers" ></p-paginator>
+
 </div>
 
   
-  <p-paginator (onPageChange)="onPageChange($event)" [rows]="rows" [totalRecords]="totalUsers" ></p-paginator>
+<p-dialog header="Error" [(visible)]="visible" [position]="position" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="true" >
+        <p>{{error}}</p>
+</p-dialog>

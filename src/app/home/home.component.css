@@ -1,22 +1,21 @@
-/* Adjust the width of the container to accommodate three cards in a row */
 .card-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
   }
   
-  p-card {
+p-card {
     width: calc(33.33% - 10px); 
-    margin-bottom: 20px; /* Add some space between rows */
+    margin-bottom: 20px;
   }
 
-  @media (max-width: 767px) {
+@media (max-width: 767px) {
     .card-container {
-        justify-content: center; /* Center cards on small screens */
+        justify-content: center;
     }
 
     p-card {
-        width: calc(100% - 10px); /* Display one card per row */
+        width: calc(100% - 10px); 
     }
 
 }
@@ -32,7 +31,6 @@ nz-alert {
   margin-top: 10px;
 }
 
-/* Adjust styles for smaller screens */
 @media (max-width: 576px) {
   .col-md-3 {
     margin-bottom: 10px;

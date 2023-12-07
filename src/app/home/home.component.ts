@@ -14,8 +14,8 @@ import { HeaderComponent } from '../header/header.component';
 import { ButtonModule } from 'primeng/button';
 import { Message } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AccordionModule } from 'primeng/accordion';
+import { DialogModule } from 'primeng/dialog';
 
 interface UserData {
   id: number;
@@ -33,6 +33,7 @@ interface UserData {
   standalone: true,
   imports: [
     CardModule,
+    DialogModule,
     HttpClientModule,
     FormsModule,
     CommonModule,
@@ -54,7 +55,7 @@ interface UserData {
 export class HomeComponent {
   Users: UserData[] = studentsData;  
   messages: Message[] = [];
-
+  error:string="";
   searchName: string = '';
   filteredPeople: UserData[] = [];
   Filters: any[] = [
@@ -76,6 +77,9 @@ export class HomeComponent {
   teams: any[] = [];
   filteredCards: any[] = [];
   uniqueGenders:string[]=[];
+  visible: boolean = false;
+  position: any = 'top-right';
+
   constructor(  ) {    
     this.totalUsers = this.Users.length;
     this.paginatedUsers = this.Users.slice(0, this.rows);
@@ -132,7 +136,6 @@ export class HomeComponent {
       const availability = selectElement.value;
       const available = availability === 'true' ? true : availability === 'false' ? false : null;
   
-      // Compare card.available directly with the boolean value
       this.filteredCards = this.Users.filter((card: any) =>
         available !== null ? card.available === available : true
       );
@@ -182,21 +185,19 @@ export class HomeComponent {
         const memberInTeam = this.teams.some(team => team.includes(card));
         
         if (!memberInTeam) {
-          // Check if any member in the selected team has the same domain
           const domainConflict = this.selectedTeam.some(member => member.domain === card.domain);
   
           if (!domainConflict) {
             this.selectedTeam.push(card);
           } else {
-            alert(`Another user from the domain ${card.domain} is already in the team.`);
+            this.showDialog(`Another user from the domain ${card.domain} is already in the team.`);
           }
         } else {
-          alert(`${card.first_name} ${card.last_name} is already in a team.`);
+          this.showDialog(`${card.first_name} ${card.last_name} is already in a team.`);
         }
       }
     } else {
-      // this.messages = [{ severity: 'error', summary: 'Error', detail: 'Message Content' }];   
-      alert(`${card.first_name} ${card.last_name} is not Available.`);
+      this.showDialog(`${card.first_name} ${card.last_name} is not Available.`);
     }
   }
   
@@ -212,6 +213,10 @@ export class HomeComponent {
     this.selectedTeam = [];
   }
 
+  showDialog(error:string) {
+      this.error =error;
+      this.visible = true;
+  }
 
 
 }
