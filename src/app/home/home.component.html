@@ -1,22 +1,65 @@
+<app-header></app-header>
 <div class="container">
   <!-- Functionalities -->
-    <section>
-        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
-            <input type="text" nz-input placeholder="input search text" [(ngModel)]="searchName" />
-          </nz-input-group>
-          <ng-template #suffixButton>
+  <section>
+    <div class="row">
+      <div class="col-md-8">
+        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton" style="width: 100%; padding: 5px;">
+          <input type="text" nz-input placeholder="Input search text" [(ngModel)]="searchName" />
+        </nz-input-group>
+        <ng-template #suffixButton>
             <button nz-button nzType="primary" nzSize="large" (click)="search()">Search</button>
-          </ng-template>
+            <button nz-button nzType="primary" nzSize="large"nzDanger (click)="clear()">Clear</button>
+
+        </ng-template>
+      </div>
       
-          <!-- Display your data here based on search results -->
-          <div *ngFor="let person of filteredPeople">
-            {{ person.first_name }} {{ person.last_name }}
+      <div class="col-md-4">
+        <div class="filters row justify-content-center">
+            
+            <div class="col-md-3 mb-2">
+              <select class="form-select" (change)="filterByDomain($event)">
+                <option value="">All Domains</option>
+                <option *ngFor="let domain of uniqueDomains" [value]="domain">{{ domain }}</option>
+              </select>
+            </div>
+            
+            <div class="col-md-3 mb-2">
+              <select class="form-select" (change)="filterByGender($event)">
+                <option *ngFor="let domain of uniqueGenders" [value]="domain">{{ domain }}</option>
+              </select>
+            </div>
+            
+            <div class="col-md-3 mb-2">
+              <select class="form-select" (change)="filterByAvailability($event)">
+                <option value="">All Availability</option>
+                <option value="true">Available</option>
+                <option value="false">Not Available</option>
+              </select>
+            </div>
           </div>
-    </section>
+        </div>
+      </div>
+  </section>
+  
+  
+  <!-- <div class="card-container" *ngIf="filter" >
+    <p-card *ngFor="let user of filteredPeople" header="User Information" [style]="{ width: '360px' }">
+        <ng-template pTemplate="header"  >
+            <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
+        </ng-template>
+        <p>
+            <strong>ID:</strong> {{ user.id }}<br>
+            <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
+            <strong>Email:</strong> {{ user.email }}<br>
+            <strong>Gender:</strong> {{ user.gender }}<br>
+            <strong>Domain:</strong> {{ user.domain }}<br>
+            <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
+        </p>
+    </p-card>
+</div>
 
-
-
-    <div class="card-container">
+    <div class="card-container" *ngIf="!filter" >
         <p-card *ngFor="let user of paginatedUsers" header="User Information" [style]="{ width: '360px' }">
             <ng-template pTemplate="header"  >
                 <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
@@ -30,7 +73,25 @@
                 <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
             </p>
         </p-card>
-    </div>
+    </div> -->
+
+
+
+    <div class="card-container" >
+        <p-card *ngFor="let user of filteredCards" header="User Information" [style]="{ width: '360px' }">
+            <ng-template pTemplate="header"  >
+                <p-avatar [image]="user.avatar" styleClass="mr-2" size="xlarge" shape="circle"></p-avatar>       
+            </ng-template>
+            <p>
+                <strong>ID:</strong> {{ user.id }}<br>
+                <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}<br>
+                <strong>Email:</strong> {{ user.email }}<br>
+                <strong>Gender:</strong> {{ user.gender }}<br>
+                <strong>Domain:</strong> {{ user.domain }}<br>
+                <strong>Available:</strong> {{ user.available ? 'Yes' : 'No' }}
+            </p>
+        </p-card>
+    </div> 
 </div>
 
   

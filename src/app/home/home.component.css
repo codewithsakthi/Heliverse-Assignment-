@@ -10,3 +10,12 @@
     margin-bottom: 20px; /* Add some space between rows */
   }
 
+  @media (max-width: 767px) {
+    .card-container {
+        justify-content: center; /* Center cards on small screens */
+    }
+
+    p-card {
+        width: calc(100% - 10px); /* Display one card per row */
+    }
+}
